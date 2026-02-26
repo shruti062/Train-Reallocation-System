@@ -1,0 +1,77 @@
+<div class="page">
+
+  <!-- Header -->
+  <header class="top-bar">
+    <h1>🚆 Train Reallocation System</h1>
+
+    <div class="nav-actions">
+      <button class="btn home" routerLink="/home">🏠 Home</button>
+      <button class="btn dashboard" routerLink="/dashboard">📊 Dashboard</button>
+      <button class="btn history" routerLink="/history">📜 History</button>
+      <button class="btn logout" (click)="logout()">🔐 Logout</button>
+    </div>
+  </header>
+
+  <!-- Form Card -->
+  <div class="card">
+
+  <div class="form-group">
+    <label for="trainType">Train Type</label>
+    <select
+      id="trainType"
+      name="trainType"
+      [(ngModel)]="trainData.Train_Type">
+
+      <option value="">Select</option>
+      <option value="Express">Express</option>
+      <option value="Passenger">Passenger</option>
+      <option value="Intercity">Intercity</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+
+    <div class="form-group">
+      <label for="distance">Distance (km)</label>
+      <input
+        id="distance"
+        name="distance"
+        type="number"
+        min="1"
+        [(ngModel)]="trainData.Distance_km">
+    </div>
+
+    <div class="form-group">
+      <label for="seats">Seats Available</label>
+      <input
+        id="seats"
+        name="seats"
+        type="number"
+        min="0"
+        [(ngModel)]="trainData.Seats_Available">
+    </div>
+
+  </div>
+
+  <div class="form-group">
+    <label for="delay">Alternate Train Delay (hrs)</label>
+    <input
+      id="delay"
+      name="delay"
+      type="number"
+      step="0.1"
+      min="0"
+      [(ngModel)]="trainData.Diff_Alt_Train_Hrs">
+  </div>
+
+  <button class="btn submit" (click)="checkSeat()">
+    🚦 Check Seat Allocation
+  </button>
+
+  <p *ngIf="loading" class="loading">
+    Checking availability...
+  </p>
+
+</div>
+
+</div>

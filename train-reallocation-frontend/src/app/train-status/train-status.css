@@ -1,0 +1,118 @@
+.page {
+  min-height: 100vh;
+  background: #f4f6f9;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.top-bar h1 {
+  color: #1f3c88;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Card */
+.card {
+  max-width: 500px;
+  margin: auto;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* Forms */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+input, select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+}
+.home {
+  background: #6a1b9a;   /* Purple */
+}
+
+.history {
+  background: #ff9800;   /* Orange */
+}
+
+/* Optional Hover Effect */
+.home:hover {
+  background: #4a148c;
+}
+
+.history:hover {
+  background: #e68900;
+}
+
+.dashboard {
+  background: #1976d2;
+}
+
+.logout {
+  background: #d32f2f;
+}
+
+.submit {
+  width: 100%;
+  background: #2e7d32;
+  margin-top: 10px;
+}
+
+/* Status */
+.loading {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.result {
+  margin-top: 15px;
+  font-size: 18px;
+  text-align: center;
+}
+
+.yes {
+  color: green;
+  font-weight: bold;
+}
+
+.no {
+  color: red;
+  font-weight: bold;
+}

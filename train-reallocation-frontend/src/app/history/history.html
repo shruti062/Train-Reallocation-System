@@ -1,0 +1,55 @@
+<div class="history-container">
+
+  <h2>📜 Booking History</h2>
+
+  <table *ngIf="history.length > 0" class="history-table">
+    <thead>
+      <tr>
+        <th>Train Name</th>
+        <th>Route</th>
+        <th>Type</th>
+        <th>Seats Available</th>
+        <th>Booking Time</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tbody>
+  <tr *ngFor="let booking of history">
+
+    <td>{{ booking.trainName }}</td>
+
+    <td>-</td>
+
+    <td>{{ booking.seat_status }}</td>
+
+    <td>-</td>
+
+    <td>
+      {{ booking.booking_time | date:'medium' }}
+    </td>
+
+    <td>
+      <button
+        class="download-btn"
+        (click)="downloadTicket(booking.trainName)">
+        🎟 Download
+      </button>
+
+      <button
+        class="cancel-btn"
+        (click)="cancelBooking(booking.trainName)">
+        ❌ Cancel
+      </button>
+    </td>
+
+  </tr>
+</tbody>
+  </table>
+
+  <div *ngIf="history.length === 0" class="empty">
+    🚆 No bookings yet
+  </div>
+
+</div>

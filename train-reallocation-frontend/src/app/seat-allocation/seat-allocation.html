@@ -1,0 +1,37 @@
+<div class="result-container" *ngIf="train">
+
+  <div class="card">
+
+    <h2>🚆 Seat Allocation Result</h2>
+
+    <div class="train-details">
+      <p><strong>Train:</strong> {{ train?.TrainName }}</p>
+<p><strong>Route:</strong> {{ train?.Source }} → {{ train?.Destination }}</p>
+<p><strong>Available Seats:</strong> {{ train?.Seats_Available }}</p>
+<p><strong>Status:</strong> {{ train?.Train_Status }}</p>
+    </div>
+
+    <!-- RESULT BOX -->
+    <div class="result-box"
+         [ngClass]="result ? 'success' : 'danger'">
+
+      <h3 *ngIf="result">✅ Seat Allocated</h3>
+      <h3 *ngIf="!result">❌ Seat Not Available</h3>
+
+    </div>
+
+    <!-- CONFIRM BUTTON -->
+    <button *ngIf="result"
+            class="confirm-btn"
+            (click)="confirmBooking()">
+      🎟 Confirm Booking
+    </button>
+
+    <!-- BACK BUTTON -->
+    <button class="back-btn"
+            (click)="goBack()">
+      ← Back
+    </button>
+
+  </div>
+</div>
