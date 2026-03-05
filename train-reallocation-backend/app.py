@@ -111,7 +111,7 @@ def register():
     email = data.get("email")
     password = data.get("password")
     phone = data.get("phone")
-    captcha_token = data.get("captcha")
+    captcha_token = data.get("captcha_token")
 
     if not all([name, email, password, phone, captcha_token]):
         return jsonify({"message": "All fields required"}), 400
@@ -187,79 +187,93 @@ def predict():
 
     try:
         data = request.json
-
         seats = data.get("Seats_Available", 0)
 
         if seats > 0:
-            result = True
+            result = "Yes"
         else:
-            result = False
+            result = "No"
+
+        # ✅ Save in history
+        prediction_history.append({
+            "timestamp": datetime.now(),
+            "seats_available": seats,
+            "result": result
+        })
 
         return jsonify({"seat_allocated": result})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
 # ================= SAVE BOOKING (MongoDB) =================
+
 @app.route("/save-booking", methods=["POST"])
 @jwt_required()
 def save_booking():
 
-    data = request.get_json()
-    train_no = data.get("TrainNo")
+    data = request.json
+    user_email = get_jwt_identity()
 
-    if not train_no:
-        return jsonify({"error": "Train number missing"}), 400
+    pnr = str(random.randint(1000000000, 9999999999))
+    current_time = datetime.now()
 
-    train = db.trains.find_one({"TrainNo": train_no})
+    booking = {
+    "PNR": pnr,
+    "user_email": user_email,
+    "TrainNo": data.get("TrainNo"),
+    "TrainName": data.get("TrainName"),
+    "Source": data.get("Source"),
+    "Destination": data.get("Destination"),
+    "Journey_Date": data.get("Journey_Date"),
+    "Departure_Time": data.get("Departure_Time"),
+    "Arrival_Time": data.get("Arrival_Time"),
+    "Passenger_Name": data.get("Passenger_Name"),
+    "Age": data.get("Age"),
+    "Gender": data.get("Gender"),
+    "Seat_Number": random.randint(1, 72),
+    "Coach": "S1",
+    "seat_status": "Confirmed",
+    "booking_date": current_time.strftime("%Y-%m-%d"),
+        "booking_time": current_time.strftime("%H:%M:%S")
+}
 
-    if not train:
-        return jsonify({"error": "Train not found"}), 404
+    bookings_collection.insert_one(booking)
+ # 🔥 Reduce seat count
+    trains_collection.update_one(
+        {"TrainNo": data.get("TrainNo")},
+        {"$inc": {"Seats_Available": -1}}
+    )
+    return jsonify({
+        "status": "Confirmed",
+        "PNR": pnr
+    })
+    # ================= GET TICKET BY PNR =================
+@app.route("/ticket/<pnr>", methods=["GET"])
+@jwt_required()
+def get_ticket(pnr):
 
-    # 🚆 If train cancelled
-    if train.get("Train_Status") == "Cancelled":
-        return jsonify({"error": "Train is cancelled"}), 400
+    user_email = get_jwt_identity()
 
-    # 🎫 Seat Allocation Logic
-    if train["Seats_Available"] > 0:
-
-        db.trains.update_one(
-            {"TrainNo": train_no},
-            {"$inc": {"Seats_Available": -1}}
-        )
-
-        seat_status = "CONFIRMED"
-
-    else:
-        db.trains.update_one(
-            {"TrainNo": train_no},
-            {"$inc": {"Waiting_List": 1}}
-        )
-
-        seat_status = "WAITING"
-
-    # 💾 Save booking
-    db.bookings.insert_one({
-        "user_email": get_jwt_identity(),
-        "TrainNo": train_no,
-        "trainName": train["TrainName"],
-        "seat_status": seat_status,
-        "booking_time": datetime.utcnow()
+    booking = bookings_collection.find_one({
+        "PNR": pnr,
+        "user_email": user_email
     })
 
-    return jsonify({"status": seat_status})
-#=================== DOWNLOAD TICKET (PDF) =================
+    if not booking:
+        return jsonify({"error": "Not found"}), 404
 
-@app.route("/download-ticket/<train_name>", methods=["GET"])
+    booking["_id"] = str(booking["_id"])
+    return jsonify(booking)
+#=================== DOWNLOAD TICKET (PDF) =================
+@app.route("/download-ticket/<pnr>", methods=["GET"])
 @jwt_required()
-def download_ticket(train_name):
+def download_ticket(pnr):
 
     current_user_email = get_jwt_identity()
 
     booking = bookings_collection.find_one({
         "user_email": current_user_email,
-        "trainName": train_name
+        "PNR": pnr
     })
 
     if not booking:
@@ -267,18 +281,22 @@ def download_ticket(train_name):
 
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer)
-
     elements = []
-    styles = getSampleStyleSheet()
 
-    elements.append(Paragraph("🚆 Train Ticket", styles["Title"]))
-    elements.append(Spacer(1, 0.5 * inch))
+    styles = getSampleStyleSheet()
+    elements.append(Paragraph("Railway E-Ticket", styles["Title"]))
+    elements.append(Spacer(1, 12))
 
     data = [
-        ["Train", booking["trainName"]],
-        ["Train No", booking["TrainNo"]],
-        ["Seat Status", booking["seat_status"]],
-        ["Booking Time", str(booking["booking_time"])]
+        ["PNR", booking.get("PNR")],
+        ["Train Name", booking.get("TrainName")],
+        ["Train No", booking.get("TrainNo")],
+        ["From", booking.get("Source")],
+        ["To", booking.get("Destination")],
+        ["Seat Status", booking.get("seat_status")],
+        ["Coach", booking.get("Coach")],
+        ["Seat Number", booking.get("Seat_Number")],
+        ["Booking Time", str(booking.get("booking_time",""))]
     ]
 
     table = Table(data)
@@ -290,32 +308,34 @@ def download_ticket(train_name):
     return send_file(
         buffer,
         as_attachment=True,
-        download_name="ticket.pdf",
+        download_name=f"Ticket_{pnr}.pdf",
         mimetype="application/pdf"
     )
 #===================cancel booking==================
-@app.route("/cancel-booking/<train_name>", methods=["DELETE"])
+@app.route("/cancel-booking/<pnr>", methods=["DELETE"])
 @jwt_required()
-def cancel_booking(train_name):
+def cancel_booking(pnr):
 
     current_user_email = get_jwt_identity()
 
     booking = bookings_collection.find_one({
         "user_email": current_user_email,
-        "trainName": train_name
+        "PNR": pnr
     })
 
     if not booking:
         return jsonify({"error": "Booking not found"}), 404
 
-    trains_collection.update_one(
-        {"trainName": train_name},
-        {"$inc": {"available_seats": 1}}
-    )
+    # Seat restore only if confirmed
+    if booking.get("seat_status") == "CONFIRMED":
+        trains_collection.update_one(
+            {"TrainNo": booking.get("TrainNo")},
+            {"$inc": {"Seats_Available": 1}}
+        )
 
     bookings_collection.delete_one({
         "user_email": current_user_email,
-        "trainName": train_name
+        "PNR": pnr
     })
 
     return jsonify({"message": "Booking cancelled successfully"})
@@ -383,7 +403,7 @@ def booking_history():
         bookings_collection.find(
             {"user_email": current_user_email},
             {"_id": 0}
-        )
+        ).sort("booking_time", -1)   
     )
 
     return jsonify(bookings), 200
@@ -393,17 +413,22 @@ def booking_history():
 # ================= ANALYTICS =================
 @app.route("/analytics", methods=["GET"])
 def analytics():
-    total = len(prediction_history)
-    yes = sum(1 for h in prediction_history if h["result"] == "Yes")
-    no = total - yes
 
-    return jsonify({
-        "total": total,
-        "allocated": yes,
-        "not_allocated": no
+    total_bookings = bookings_collection.count_documents({})
+
+    confirmed = bookings_collection.count_documents({
+        "seat_status": "Confirmed"
     })
 
+    cancelled = bookings_collection.count_documents({
+        "seat_status": "Cancelled"
+    })
 
+    return jsonify({
+        "total": total_bookings,
+        "allocated": confirmed,
+        "not_allocated": cancelled
+    })
 # ================= RUN =================
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

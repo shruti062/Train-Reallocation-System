@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { TrainService } from '../services/train.service';
 
 @Component({
   selector: 'app-train-status',
@@ -13,62 +12,46 @@ import { TrainService } from '../services/train.service';
 })
 export class TrainStatus {
 
-  trainData = {
-    Train_Type: '',
-    Distance_km: 0,
-    Seats_Available: 0,
-    Diff_Alt_Train_Hrs: 0
+  passengerData = {
+    Passenger_Name: '',
+    Age: null,
+    Gender: '',
+    Journey_Date: ''
   };
 
-  result = '';
-  loading = false;
+  selectedTrain: any;
 
-  constructor(
-    private trainService: TrainService,
-    private router: Router
-  ) {
+  constructor(private router: Router) {
 
-    const selectedTrain = history.state.selectedTrain;
+    const state = history.state;
 
-    if (selectedTrain) {
-      this.trainData.Train_Type = selectedTrain.Train_Type || '';
-      this.trainData.Seats_Available = selectedTrain.Seats_Available || 0;
-      this.trainData.Distance_km = selectedTrain.Distance_km ?? 100;
-      this.trainData.Diff_Alt_Train_Hrs = 1;
+    if (!state.selectedTrain) {
+      this.router.navigate(['/home']);
+      return;
     }
 
+    this.selectedTrain = state.selectedTrain;
   }
 
-  // 🚦 Seat Prediction
-  checkSeat() {
+  continueBooking() {
 
-    this.loading = true;
-    this.result = '';
+    if (!this.passengerData.Passenger_Name ||
+        !this.passengerData.Age ||
+        !this.passengerData.Gender ||
+        !this.passengerData.Journey_Date) {
 
-    this.trainService.predictSeat(this.trainData).subscribe({
-      next: (res: any) => {
+      alert("Please fill all passenger details");
+      return;
+    }
 
-        this.result = res.seat_allocated;
-        this.loading = false;
-
-        // ✅ Redirect to Seat Allocation page
-        this.router.navigate(['/seat-allocation'], {
-          state: {
-            selectedTrain: history.state.selectedTrain, 
-            result: res.seat_allocated
-          }
-        });
-
-      },
-      error: () => {
-        this.result = 'Error connecting to server';
-        this.loading = false;
+    this.router.navigate(['/seat-allocation'], {
+      state: {
+        selectedTrain: this.selectedTrain,
+        passengerData: this.passengerData
       }
     });
-
   }
 
-  // 🔐 Logout
   logout() {
     localStorage.removeItem('loggedIn');
     this.router.navigate(['/']);

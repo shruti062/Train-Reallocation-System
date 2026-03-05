@@ -39,7 +39,7 @@ export class History implements OnInit {
       return res.json();
     })
     .then(data => {
-      this.history = data.reverse();
+      this.history = data;
     })
     .catch(err => {
       console.error("History Load Error:", err);
@@ -48,59 +48,29 @@ export class History implements OnInit {
   }
 
   // ================= DOWNLOAD TICKET =================
-  downloadTicket(trainName: string) {
-
-    const token = localStorage.getItem('token');
-
-    fetch(`http://127.0.0.1:5000/download-ticket/${encodeURIComponent(trainName)}`, {
-      method: "GET",
-      headers: {
-        "Authorization": "Bearer " + token
-      }
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Download failed");
-      }
-      return response.blob();
-    })
-    .then(blob => {
-
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-
-      a.href = url;
-      a.download = "ticket.pdf";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-    })
-    .catch(err => {
-      console.error("Download Error:", err);
-      alert("Ticket download failed");
-    });
-  }
+ downloadTicket(pnr: string) {
+this.router.navigate(['/ticket', pnr]);
+}
 
   // ================= CANCEL BOOKING =================
-  cancelBooking(trainNo: string) {
+  cancelBooking(pnr: string) {
 
-    const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
-    fetch(`http://127.0.0.1:5000/cancel-booking/${encodeURIComponent(trainNo)}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message || "Booking Cancelled");
-      this.loadHistory();  // reload after cancel
-    })
-    .catch(err => {
-      console.error("Cancel Error:", err);
-      alert("Cancel failed");
-    });
-  }
+  fetch(`http://127.0.0.1:5000/cancel-booking/${pnr}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message || "Booking Cancelled");
+    this.loadHistory();
+  })
+  .catch(err => {
+    console.error("Cancel Error:", err);
+    alert("Cancel failed");
+  });
+}
 }

@@ -31,14 +31,15 @@ export class Home {
 
   get filteredTrains() {
     return this.trains.filter(train =>
-      (train.trainName || '').toLowerCase().includes(this.searchText.toLowerCase()) ||
-      (train.source || '').toLowerCase().includes(this.searchText.toLowerCase()) ||
-      (train.destination || '').toLowerCase().includes(this.searchText.toLowerCase())
+      (train.TrainName || '').toLowerCase().includes(this.searchText.toLowerCase()) ||
+      (train.Source || '').toLowerCase().includes(this.searchText.toLowerCase()) ||
+      (train.Destination || '').toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
 
+  // ✅ FIXED: Now goes to Passenger Details page
   selectTrain(train: any) {
-    this.router.navigate(['/seat-allocation'], {
+    this.router.navigate(['/train-status'], {
       state: { selectedTrain: train }
     });
   }

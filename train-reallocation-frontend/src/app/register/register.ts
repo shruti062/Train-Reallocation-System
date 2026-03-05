@@ -3,31 +3,34 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { RecaptchaModule } from 'ng-recaptcha';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RecaptchaModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })
 export class Register {
 
-  // ==========================
-  // VARIABLES
-  // ==========================
-  step = 1;
+  step: number = 1;
+
   phone: string = '';
   otp: string = '';
   name: string = '';
   email: string = '';
   password: string = '';
 
-  // ✅ STRICT MODE FIX
-  captchaToken: string | null = null;
+  captchaToken: string = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+
+    // ✅ Listen for captcha success
+    window.addEventListener('captchaResolved', (event: any) => {
+      this.captchaToken = event.detail;
+    });
+
+  }
 
   // ==========================
   // SEND OTP
@@ -46,7 +49,7 @@ export class Register {
       alert("OTP Sent!");
       this.step = 2;
 
-    }, error => {
+    }, () => {
       alert("Failed to send OTP ❌");
     });
   }
@@ -67,26 +70,17 @@ export class Register {
     }).subscribe((res: any) => {
 
       if (res.success) {
-        alert("OTP Verified! ✅");
+        alert("OTP Verified ✅");
         this.step = 3;
       } else {
         alert("Invalid OTP ❌");
       }
 
-    }, error => {
-      alert("OTP verification failed");
     });
   }
 
   // ==========================
-  // CAPTCHA RESOLVED
-  // ==========================
-  onCaptchaResolved(token: string | null) {
-    this.captchaToken = token;
-  }
-
-  // ==========================
-  // REGISTER USER
+  // REGISTER
   // ==========================
   register() {
 
@@ -95,8 +89,9 @@ export class Register {
       return;
     }
 
+    // ✅ Check captcha
     if (!this.captchaToken) {
-      alert("Please verify you are not a robot!");
+      alert("Please verify 'I am not a robot'");
       return;
     }
 
@@ -105,16 +100,26 @@ export class Register {
       name: this.name,
       email: this.email,
       password: this.password,
-      captcha: this.captchaToken
-    }).subscribe((res: any) => {
+      captcha_token: this.captchaToken
+    }).subscribe(() => {
 
-      alert("Registered Successfully! 🎉");
+      alert("Registered Successfully 🎉");
 
-      // Redirect after success
+      this.captchaToken = '';
       this.router.navigate(['/login']);
 
-    }, error => {
+    }, () => {
+
       alert("Registration Failed ❌");
+
     });
   }
 }
+
+// ==========================
+// reCAPTCHA Callback Function
+// ==========================
+(window as any).onCaptchaSuccess = (token: string) => {
+  const event = new CustomEvent('captchaResolved', { detail: token });
+  window.dispatchEvent(event);
+};

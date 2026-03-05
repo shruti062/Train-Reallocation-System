@@ -12,39 +12,36 @@ import { Router } from '@angular/router';
 export class SeatAllocation implements OnInit {
 
   train: any;
-  result: boolean = false;   // ✅ must be boolean
+  passengerData: any;
+  result: boolean = false;
 
   constructor(private router: Router) {}
 
   ngOnInit(): void {
-  this.train = history.state.selectedTrain;
 
-  if (!this.train) {
-    this.router.navigate(['/home']);
-    return;
+    const state = history.state;
+
+    this.train = state.selectedTrain;
+    this.passengerData = state.passengerData;
+
+    if (!this.train || !this.passengerData) {
+      this.router.navigate(['/home']);
+      return;
+    }
+
+    if (
+      this.train.Seats_Available > 0 &&
+      this.train.Train_Status !== 'Cancelled'
+    ) {
+      this.result = true;
+    } else {
+      this.result = false;
+    }
   }
-
-  console.log("Selected Train:", this.train);
-
-  // ✅ MongoDB field names use karo
-  if (
-  this.train.Seats_Available > 0 &&
-  this.train.Train_Status !== 'Cancelled'
-) {
-    this.result = true;
-  } else {
-    this.result = false;
-  }
-}
 
   confirmBooking() {
 
     const token = localStorage.getItem('token');
-
-    if (!this.train?.TrainNo) {
-      alert("Train number missing");
-      return;
-    }
 
     fetch('http://127.0.0.1:5000/save-booking', {
       method: 'POST',
@@ -53,7 +50,17 @@ export class SeatAllocation implements OnInit {
         'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({
-        TrainNo: this.train.TrainNo   // ✅ correct field
+        TrainNo: this.train.TrainNo,
+        TrainName: this.train.TrainName,
+        Source: this.train.Source,
+        Destination: this.train.Destination,
+        Journey_Date: this.passengerData.Journey_Date,
+        Departure_Time: this.train.Departure_Time,
+        Arrival_Time: this.train.Arrival_Time,
+        Passenger_Name: this.passengerData.Passenger_Name,
+        Age: this.passengerData.Age,
+        Gender: this.passengerData.Gender,
+        Email: localStorage.getItem('email')
       })
     })
     .then(res => res.json())
@@ -63,7 +70,7 @@ export class SeatAllocation implements OnInit {
         alert(data.error);
       } else {
         alert("Seat Status: " + data.status);
-        this.router.navigate(['/history']);
+        this.router.navigate(['/ticket', data.PNR]);
       }
 
     })

@@ -12,66 +12,38 @@
     </div>
   </header>
 
-  <!-- Form Card -->
+  <!-- Passenger Details Card -->
   <div class="card">
 
-  <div class="form-group">
-    <label for="trainType">Train Type</label>
-    <select
-      id="trainType"
-      name="trainType"
-      [(ngModel)]="trainData.Train_Type">
-
-      <option value="">Select</option>
-      <option value="Express">Express</option>
-      <option value="Passenger">Passenger</option>
-      <option value="Intercity">Intercity</option>
-    </select>
-  </div>
-
-  <div class="form-row">
+    <h2>👤 Passenger Details</h2>
 
     <div class="form-group">
-      <label for="distance">Distance (km)</label>
-      <input
-        id="distance"
-        name="distance"
-        type="number"
-        min="1"
-        [(ngModel)]="trainData.Distance_km">
+      <label>Passenger Name</label>
+      <input type="text" [(ngModel)]="passengerData.Passenger_Name">
     </div>
 
     <div class="form-group">
-      <label for="seats">Seats Available</label>
-      <input
-        id="seats"
-        name="seats"
-        type="number"
-        min="0"
-        [(ngModel)]="trainData.Seats_Available">
+      <label>Age</label>
+      <input type="number" [(ngModel)]="passengerData.Age">
     </div>
 
+    <div class="form-group">
+      <label>Gender</label>
+      <select [(ngModel)]="passengerData.Gender">
+        <option value="">Select</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Journey Date</label>
+      <input type="date" [(ngModel)]="passengerData.Journey_Date">
+    </div>
+
+    <button class="btn submit" (click)="continueBooking()">
+      🎟 Continue to Seat Allocation
+    </button>
+
   </div>
-
-  <div class="form-group">
-    <label for="delay">Alternate Train Delay (hrs)</label>
-    <input
-      id="delay"
-      name="delay"
-      type="number"
-      step="0.1"
-      min="0"
-      [(ngModel)]="trainData.Diff_Alt_Train_Hrs">
-  </div>
-
-  <button class="btn submit" (click)="checkSeat()">
-    🚦 Check Seat Allocation
-  </button>
-
-  <p *ngIf="loading" class="loading">
-    Checking availability...
-  </p>
-
-</div>
-
 </div>

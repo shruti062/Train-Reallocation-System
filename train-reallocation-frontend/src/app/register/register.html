@@ -2,32 +2,31 @@
 
   <h2>User Registration</h2>
 
-  <!-- Phone Input -->
+  <!-- Step 1 -->
   <div *ngIf="step === 1">
     <input type="text" [(ngModel)]="phone" placeholder="Enter Phone Number">
     <button (click)="sendOtp()">Send OTP</button>
   </div>
 
-  <!-- OTP Verification -->
+  <!-- Step 2 -->
   <div *ngIf="step === 2">
     <input type="text" [(ngModel)]="otp" placeholder="Enter OTP">
     <button (click)="verifyOtp()">Verify OTP</button>
   </div>
 
-  <!-- Registration Form -->
-  <div *ngIf="step === 3">
-    <input type="text" [(ngModel)]="name" placeholder="Full Name">
-    <input type="email" [(ngModel)]="email" placeholder="Email">
-    <input type="password" [(ngModel)]="password" placeholder="Password">
+  <!-- Step 3 -->
+  <div [hidden]="step !== 3">
 
-    <!-- Simple CAPTCHA -->
-    <re-captcha
-  siteKey="6Lc7c24sAAAAANvFuON2KjnHgG35pkfl9Vi_jUHa"
-  (resolved)="onCaptchaResolved($event)">
-</re-captcha>
+  <input type="text" [(ngModel)]="name" placeholder="Full Name">
+  <input type="email" [(ngModel)]="email" placeholder="Email">
+  <input type="password" [(ngModel)]="password" placeholder="Password">
 
-
-    <button (click)="register()">Register</button>
+  <div class="g-recaptcha"
+       data-sitekey="6Lc7c24sAAAAANvFuON2KjnHgG35pkfl9Vi_jUHa">
   </div>
+
+  <button (click)="register()">Register</button>
+
+</div>
 
 </div>

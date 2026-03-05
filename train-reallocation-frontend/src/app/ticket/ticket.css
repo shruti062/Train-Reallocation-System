@@ -1,0 +1,123 @@
+.ticket-wrapper {
+  width: 850px;
+  margin: auto;
+  background: #fdfdfd;
+  border: 1px solid #ccc;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  position: relative;
+}
+
+/* HEADER */
+.top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid #0d47a1;
+  padding-bottom: 10px;
+}
+
+.logo-small { height: 60px; }
+.logo-big { height: 70px; margin-left: 10px; }
+
+.title-section {
+  text-align: center;
+}
+
+.title-section h1 {
+  color: #0d47a1;
+  margin: 0;
+}
+
+.website {
+  font-size: 14px;
+  color: #555;
+}
+
+.contact-strip {
+  text-align: right;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+/* PNR */
+.pnr-section {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.pnr-section h2 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+/* SECTION HEADERS */
+.section-header {
+  padding: 8px 10px;
+  font-weight: bold;
+  color: white;
+  margin-top: 15px;
+}
+
+.orange { background: #f57c00; }
+.blue { background: #1565c0; }
+
+.section-body {
+  border: 1px solid #ccc;
+  padding: 10px;
+  line-height: 28px;
+}
+
+.journey-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* QR */
+.qr-box {
+  position: absolute;
+  right: 30px;
+  top: 300px;
+}
+
+.confirmed {
+  color: green;
+  font-weight: bold;
+}
+
+/* IMPORTANT */
+.important-box {
+  margin-top: 20px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  background: #fafafa;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 20px;
+  font-weight: bold;
+  color: #0d47a1;
+}
+@media print {
+
+  body * {
+    visibility: hidden;
+  }
+
+  .ticket-wrapper,
+  .ticket-wrapper * {
+    visibility: visible;
+  }
+
+  .ticket-wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .print-btn {
+    display: none;
+  }
+}

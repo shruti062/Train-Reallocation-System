@@ -1,0 +1,88 @@
+<div class="ticket-wrapper" *ngIf="ticket">
+
+  <!-- Header -->
+  <div class="top-header">
+    <div class="logo-left">
+      <img src="assets/irctc.png" class="logo-small">
+      <img src="assets/indianrail.png" class="logo-big">
+    </div>
+
+    <div class="title-section">
+      <h1>INDIAN RAILWAYS E-TICKET</h1>
+      <p>BOOKING THROUGH <strong>IRCTC</strong></p>
+      <p class="website">www.irctc.co.in</p>
+    </div>
+
+    <div class="logo-right">
+      <img src="assets/emblem.png" class="logo-small">
+    </div>
+  </div>
+
+  <div class="contact-strip">
+    Customer Care: 139
+  </div>
+
+  <!-- PNR + Barcode -->
+  <div class="pnr-section">
+    <h2>PNR: {{ticket?.PNR}}</h2>
+    <svg id="barcode"></svg>
+  </div>
+
+  <!-- Passenger -->
+  <div class="section-header orange">Passenger Details</div>
+  <div class="section-body">
+    <div><strong>Name:</strong> {{ticket?.Passenger_Name}}</div>
+    <div><strong>Age:</strong> {{ticket?.Age}}</div>
+    <div><strong>Gender:</strong> {{ticket?.Gender}}</div>
+    <div><strong>Passenger Email:</strong> {{ticket?.user_email}}</div>
+  </div>
+
+  <!-- Journey -->
+  <div class="section-header blue">Journey Details</div>
+  <div class="section-body journey-grid">
+    <div><strong>Train No:</strong> {{ticket?.TrainNo}}</div>
+    <div><strong>Train Name:</strong> {{ticket?.TrainName}}</div>
+    <div><strong>From:</strong> {{ticket?.Source}}</div>
+    <div><strong>To:</strong> {{ticket?.Destination}}</div>
+    <div><strong>Date of Journey:</strong> {{ticket?.Journey_Date}}</div>
+    <div><strong>Dep. Time:</strong> {{ticket?.Departure_Time}}</div>
+    <div><strong>Arrival Time:</strong> {{ticket?.Arrival_Time}}</div>
+  </div>
+
+  <!-- QR -->
+  <div class="qr-box">
+    <canvas id="qr-canvas"></canvas>
+  </div>
+
+  <!-- Reservation -->
+  <div class="section-header orange">Reservation Details</div>
+  <div class="section-body">
+    <div><strong>Coach:</strong> {{ticket?.Coach}}</div>
+    <div><strong>Seat No:</strong> {{ticket?.Seat_Number}}</div>
+    <div>
+      <strong>Status:</strong>
+      <span class="confirmed">{{ticket?.seat_status}}</span>
+    </div>
+  </div>
+
+  <!-- Important -->
+  <div class="important-box">
+    <h3>Important Information</h3>
+    <ul>
+      <li>Please carry a valid ID Proof during the journey.</li>
+      <li>Arrive at the station 30 minutes before departure.</li>
+      <li>This is a computer-generated receipt and does not require a signature.</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    Have a Pleasant Journey!
+  </div>
+
+  <div class="print-section">
+    <button class="print-btn" (click)="printTicket()">
+      ⬇ Download / Print Ticket
+    </button>
+  </div>
+
+</div>
