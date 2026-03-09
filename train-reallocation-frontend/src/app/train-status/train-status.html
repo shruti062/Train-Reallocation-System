@@ -1,21 +1,13 @@
 <div class="page">
 
-  <!-- Header -->
-  <header class="top-bar">
-    <h1>🚆 Train Reallocation System</h1>
+  <!-- Back link -->
+  <div class="back-link">
+    <a routerLink="/home">← Back to Trains</a>
+  </div>
 
-    <div class="nav-actions">
-      <button class="btn home" routerLink="/home">🏠 Home</button>
-      <button class="btn dashboard" routerLink="/dashboard">📊 Dashboard</button>
-      <button class="btn history" routerLink="/history">📜 History</button>
-      <button class="btn logout" (click)="logout()">🔐 Logout</button>
-    </div>
-  </header>
-
-  <!-- Passenger Details Card -->
   <div class="card">
 
-    <h2>👤 Passenger Details</h2>
+    <h2>Passenger Details</h2>
 
     <div class="form-group">
       <label>Passenger Name</label>
@@ -41,9 +33,10 @@
       <input type="date" [(ngModel)]="passengerData.Journey_Date">
     </div>
 
-    <button class="btn submit" (click)="continueBooking()">
-      🎟 Continue to Seat Allocation
+    <button class="submit-btn" (click)="continueBooking()">
+      Continue to Seat Allocation →
     </button>
 
   </div>
+
 </div>

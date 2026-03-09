@@ -1,118 +1,96 @@
+/* Page Layout */
 .page {
   min-height: 100vh;
-  background: #f4f6f9;
-  padding: 20px;
-  font-family: 'Segoe UI', sans-serif;
-}
-
-/* Header */
-.top-bar {
+  background: #f4f6fb;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 30px;
+  padding-top: 60px;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.top-bar h1 {
-  color: #1f3c88;
+/* Back Link */
+.back-link {
+  width: 420px;
+  margin-bottom: 15px;
 }
 
-.nav-actions {
-  display: flex;
-  gap: 10px;
+.back-link a {
+  text-decoration: none;
+  color: #4a6cf7;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
 }
 
 /* Card */
 .card {
-  max-width: 500px;
-  margin: auto;
-  background: #fff;
-  padding: 25px;
+  width: 420px;
+  background: white;
+  padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-/* Forms */
+/* Title */
+.card h2 {
+  margin-bottom: 25px;
+  text-align: center;
+  color: #333;
+}
+
+/* Form Group */
 .form-group {
+  margin-bottom: 18px;
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
 }
 
-.form-row {
-  display: flex;
-  gap: 15px;
+/* Labels */
+.form-group label {
+  font-size: 14px;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #555;
 }
 
-label {
-  font-weight: 600;
-  margin-bottom: 5px;
-}
-
-input, select {
+/* Inputs */
+.form-group input,
+.form-group select {
   padding: 10px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid #dcdcdc;
+  font-size: 14px;
+  transition: 0.2s;
 }
 
-/* Buttons */
-.btn {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  color: white;
-  font-weight: 600;
-}
-.home {
-  background: #6a1b9a;   /* Purple */
+/* Focus effect */
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4a6cf7;
+  box-shadow: 0 0 0 2px rgba(74,108,247,0.1);
 }
 
-.history {
-  background: #ff9800;   /* Orange */
-}
-
-/* Optional Hover Effect */
-.home:hover {
-  background: #4a148c;
-}
-
-.history:hover {
-  background: #e68900;
-}
-
-.dashboard {
-  background: #1976d2;
-}
-
-.logout {
-  background: #d32f2f;
-}
-
-.submit {
+/* Button */
+.submit-btn {
   width: 100%;
-  background: #2e7d32;
+  padding: 12px;
   margin-top: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #4a6cf7;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-/* Status */
-.loading {
-  text-align: center;
-  margin-top: 10px;
-}
-
-.result {
-  margin-top: 15px;
-  font-size: 18px;
-  text-align: center;
-}
-
-.yes {
-  color: green;
-  font-weight: bold;
-}
-
-.no {
-  color: red;
-  font-weight: bold;
+/* Button hover */
+.submit-btn:hover {
+  background: #3451d1;
 }

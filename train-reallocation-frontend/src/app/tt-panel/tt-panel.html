@@ -1,0 +1,49 @@
+<div class="tt-container">
+
+<h1>🚆 Railway TT / Admin Panel</h1>
+
+<!-- PNR Check Section -->
+<div class="card">
+
+<h2>🔎 Check Alternative Train</h2>
+
+<input type="text" [(ngModel)]="pnr" placeholder="Enter Passenger PNR">
+
+<button (click)="checkAlternative()">
+Check Alternative Train
+</button>
+
+</div>
+
+
+<!-- Alternative Train Result -->
+<div *ngIf="train" class="card result">
+
+<h2>Alternative Train Found</h2>
+
+<p><b>Train No:</b> {{train.TrainNo}}</p>
+<p><b>Train Name:</b> {{train.TrainName}}</p>
+<p><b>Departure:</b> {{train.Departure_Time}}</p>
+<p><b>Arrival:</b> {{train.Arrival_Time}}</p>
+
+<button class="allocate-btn" (click)="allocateSeat()">
+Allocate Seat
+</button>
+
+</div>
+
+
+<!-- Cancel Train Section -->
+<div class="card cancel">
+
+<h2>🚫 Cancel Train (Admin)</h2>
+
+<input type="text" [(ngModel)]="trainNo" placeholder="Enter Train Number">
+
+<button class="cancel-btn" (click)="cancelTrain()">
+Cancel Train
+</button>
+
+</div>
+
+</div>

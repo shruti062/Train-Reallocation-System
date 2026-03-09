@@ -15,6 +15,9 @@ export class SeatAllocation implements OnInit {
   passengerData: any;
   result: boolean = false;
 
+  // 🔔 Notification variable
+  notification: string = "";
+
   constructor(private router: Router) {}
 
   ngOnInit(): void {
@@ -29,6 +32,11 @@ export class SeatAllocation implements OnInit {
       return;
     }
 
+    // 🤖 AI Smart Coach Logic
+    if (this.train.Seats_Available < 20 && this.train.Train_Status !== 'Cancelled') {
+      this.smartCoachAdd();
+    }
+
     if (
       this.train.Seats_Available > 0 &&
       this.train.Train_Status !== 'Cancelled'
@@ -37,6 +45,16 @@ export class SeatAllocation implements OnInit {
     } else {
       this.result = false;
     }
+  }
+
+  // 🤖 Smart Coach Function
+  smartCoachAdd() {
+
+    // 1 coach = 72 seats
+    this.train.Seats_Available += 72;
+
+    this.notification =
+      "🚆 AI System automatically added a new coach due to high passenger demand!";
   }
 
   confirmBooking() {
@@ -69,7 +87,14 @@ export class SeatAllocation implements OnInit {
       if (data.error) {
         alert(data.error);
       } else {
+
         alert("Seat Status: " + data.status);
+
+        // 🔔 Smart coach notification
+        if(this.notification){
+          alert(this.notification);
+        }
+
         this.router.navigate(['/ticket', data.PNR]);
       }
 
@@ -82,4 +107,5 @@ export class SeatAllocation implements OnInit {
   goBack() {
     this.router.navigate(['/home']);
   }
+
 }

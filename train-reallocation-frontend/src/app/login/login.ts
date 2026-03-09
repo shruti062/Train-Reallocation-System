@@ -36,7 +36,7 @@ export class Login {
         localStorage.setItem('token', data.token);
 
         alert("Login Successful");
-        this.router.navigate(['/train-status']);
+        this.router.navigate(['/home']);
 
       } else {
         alert("Invalid Credentials");

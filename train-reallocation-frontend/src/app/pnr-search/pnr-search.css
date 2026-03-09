@@ -1,0 +1,37 @@
+.pnr-container{
+width:400px;
+margin:50px auto;
+padding:20px;
+border-radius:10px;
+background:#f4f6ff;
+box-shadow:0 5px 10px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+input{
+width:80%;
+padding:10px;
+margin:10px 0;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+button{
+padding:10px 20px;
+background:#3f51b5;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#303f9f;
+}
+
+.ticket-box{
+margin-top:20px;
+padding:15px;
+background:white;
+border-radius:8px;
+}

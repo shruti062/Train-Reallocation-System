@@ -4,11 +4,16 @@
 
     <h2>🚆 Seat Allocation Result</h2>
 
+    <!-- 🔔 AI Notification -->
+    <div *ngIf="notification" class="notification-box">
+      {{ notification }}
+    </div>
+
     <div class="train-details">
       <p><strong>Train:</strong> {{ train?.TrainName }}</p>
-<p><strong>Route:</strong> {{ train?.Source }} → {{ train?.Destination }}</p>
-<p><strong>Available Seats:</strong> {{ train?.Seats_Available }}</p>
-<p><strong>Status:</strong> {{ train?.Train_Status }}</p>
+      <p><strong>Route:</strong> {{ train?.Source }} → {{ train?.Destination }}</p>
+      <p><strong>Available Seats:</strong> {{ train?.Seats_Available }}</p>
+      <p><strong>Status:</strong> {{ train?.Train_Status }}</p>
     </div>
 
     <!-- RESULT BOX -->

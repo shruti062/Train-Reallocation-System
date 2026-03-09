@@ -216,6 +216,15 @@ def save_booking():
 
     pnr = str(random.randint(1000000000, 9999999999))
     current_time = datetime.now()
+    train_no = data.get("TrainNo")
+    notification = ""
+
+    # Get train details
+    train = trains_collection.find_one({"TrainNo": train_no})
+# 🔥 Smart coach auto add check
+    if train and train.get("Seats_Available",0) <= 0:
+        smart_add_coach(train_no)
+        notification = "🚆 Train was full. Extra coach added automatically."
 
     booking = {
     "PNR": pnr,
@@ -245,7 +254,8 @@ def save_booking():
     )
     return jsonify({
         "status": "Confirmed",
-        "PNR": pnr
+        "PNR": pnr,
+         "notification": notification
     })
     # ================= GET TICKET BY PNR =================
 @app.route("/ticket/<pnr>", methods=["GET"])
@@ -312,6 +322,7 @@ def download_ticket(pnr):
         mimetype="application/pdf"
     )
 #===================cancel booking==================
+
 @app.route("/cancel-booking/<pnr>", methods=["DELETE"])
 @jwt_required()
 def cancel_booking(pnr):
@@ -326,8 +337,8 @@ def cancel_booking(pnr):
     if not booking:
         return jsonify({"error": "Booking not found"}), 404
 
-    # Seat restore only if confirmed
-    if booking.get("seat_status") == "CONFIRMED":
+    if booking.get("seat_status") == "Confirmed":
+
         trains_collection.update_one(
             {"TrainNo": booking.get("TrainNo")},
             {"$inc": {"Seats_Available": 1}}
@@ -429,6 +440,176 @@ def analytics():
         "allocated": confirmed,
         "not_allocated": cancelled
     })
-# ================= RUN =================
+# ================= TRAIN CANCEL + AUTO REALLOCATION =================
+
+@app.route("/cancel-train/<train_no>", methods=["POST"])
+def cancel_train(train_no):
+
+    train_no = int(train_no)   # 🔥 IMPORTANT FIX
+
+    passengers = list(
+        bookings_collection.find({
+            "TrainNo": train_no
+        })
+    )
+
+    if not passengers:
+        return jsonify({"message": "No passengers found for this train"})
+
+    reallocated = 0
+
+    for passenger in passengers:
+
+        source = passenger.get("Source")
+        destination = passenger.get("Destination")
+
+        alt_train = trains_collection.find_one({
+            "Source": source,
+            "Destination": destination,
+            "Seats_Available": {"$gt": 0},
+            "TrainNo": {"$ne": train_no}
+        })
+
+        if alt_train:
+
+            # reduce seat
+            trains_collection.update_one(
+                {"TrainNo": alt_train["TrainNo"]},
+                {"$inc": {"Seats_Available": -1}}
+            )
+            smart_add_coach(alt_train["TrainNo"])
+            # update passenger booking
+            bookings_collection.update_one(
+                {"_id": passenger["_id"]},
+                {"$set": {
+                    "TrainNo": alt_train["TrainNo"],
+                    "TrainName": alt_train["TrainName"],
+                    "Seat_Number": random.randint(1,72),
+                    "seat_status": "Auto-Reallocated"
+                }}
+            )
+
+            reallocated += 1
+            
+    return jsonify({
+        "message": "Train cancelled and passengers reallocated",
+        "total_passengers": len(passengers),
+        "reallocated": reallocated
+    })
+# ================= FIND ALTERNATIVE TRAINS =================
+@app.route("/find-alternative/<pnr>", methods=["GET"])
+def find_alternative(pnr):
+
+    booking = bookings_collection.find_one({"PNR": pnr})
+
+    if not booking:
+        return jsonify({"error": "Booking not found"}), 404
+
+    source = booking.get("Source")
+    destination = booking.get("Destination")
+
+    alt_trains = list(
+        trains_collection.find(
+            {
+                "Source": source,
+                "Destination": destination,
+                "Seats_Available": {"$gt": 0},
+                "TrainNo": {"$ne": booking.get("TrainNo")}
+            },
+            {"_id": 0}
+        )
+    )
+
+    return jsonify({
+        "passenger": booking.get("Passenger_Name"),
+        "original_train": booking.get("TrainName"),
+        "alternative_trains": alt_trains
+    })
+# ================= TT REALLOCATE SEAT =================
+@app.route("/tt-reallocate", methods=["POST"])
+def tt_reallocate():
+
+    data = request.json
+    pnr = data.get("PNR")
+    new_train = int(data.get("TrainNo"))
+
+    booking = bookings_collection.find_one({"PNR": pnr})
+
+    if not booking:
+        return jsonify({"error": "Booking not found"}), 404
+
+    train = trains_collection.find_one({"TrainNo": new_train})
+
+    if not train:
+        return jsonify({"error": "Train not found"}), 404
+
+    if train["Seats_Available"] <= 0:
+        return jsonify({"error": "No seats available"}), 400
+
+    # reduce seat in new train
+    trains_collection.update_one(
+        {"TrainNo": new_train},
+        {"$inc": {"Seats_Available": -1}}
+    )
+    smart_add_coach(new_train)
+    # update booking
+    bookings_collection.update_one(
+        {"PNR": pnr},
+        {"$set": {
+            "TrainNo": new_train,
+            "TrainName": train["TrainName"],
+            "Seat_Number": random.randint(1,72),
+            "seat_status": "Reallocated"
+        }}
+    )
+
+    return jsonify({"message": "Seat reallocated successfully"})
+# ================= PNR STATUS =================
+@app.route("/pnr-status/<pnr>", methods=["GET"])
+def pnr_status(pnr):
+
+    booking = bookings_collection.find_one({"PNR": pnr})
+
+    if not booking:
+        return jsonify({"error": "PNR not found"}), 404
+
+    booking["_id"] = str(booking["_id"])
+
+    return jsonify({
+        "PNR": booking.get("PNR"),
+        "Passenger_Name": booking.get("Passenger_Name"),
+        "TrainNo": booking.get("TrainNo"),
+        "TrainName": booking.get("TrainName"),
+        "Source": booking.get("Source"),
+        "Destination": booking.get("Destination"),
+        "Coach": booking.get("Coach"),
+        "Seat_Number": booking.get("Seat_Number"),
+        "seat_status": booking.get("seat_status")
+    })
+# ================= SMART COACH AUTO ADD =================
+def smart_add_coach(train_no):
+
+    train = trains_collection.find_one({"TrainNo": train_no})
+
+    if not train:
+        return
+
+    if train.get("Seats_Available",0) > 0:
+        return
+
+    if train.get("extra_coaches_added",0) < train.get("max_extra_coaches",0):
+
+        trains_collection.update_one(
+            {"TrainNo": train_no},
+            {
+                "$inc": {
+                    "Seats_Available": 72,
+                    "extra_coaches_added": 1
+                }
+            }
+        )
+
+        print(f"🚆 Extra coach automatically added to train {train_no}")
+# ================= RUN APP =================
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

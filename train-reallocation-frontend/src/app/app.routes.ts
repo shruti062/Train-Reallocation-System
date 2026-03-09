@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { Login } from './login/login';
 import { Dashboard } from './dashboard/dashboard';
 import { Home } from './home/home';
 import { Ticket } from './ticket/ticket';
@@ -13,6 +12,8 @@ export const routes: Routes = [
   { path: 'train-status', loadComponent: () => import('./train-status/train-status').then(m => m.TrainStatus) },
   { path: 'dashboard', component: Dashboard },
   { path:  'history', loadComponent: () => import('./history/history').then(m => m.History) },
-  { path: 'ticket/:pnr', component: Ticket }
+  { path: 'ticket/:pnr', component: Ticket },
+  { path: 'tt-panel', loadComponent: () => import('./tt-panel/tt-panel').then(m => m.TtPanel) },
+  {path:'pnr-search',loadComponent:()=>import('./pnr-search/pnr-search').then(m=>m.PnrSearch)}
 ];
 

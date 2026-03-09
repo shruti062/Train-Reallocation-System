@@ -1,46 +1,87 @@
-<h2>🚆 Available Trains</h2>
+<div class="page">
 
-<input
-  type="text"
-  id="searchText"
-  name="searchText"
-  [(ngModel)]="searchText"
-  placeholder="🔍 Search Train..."
-  style="padding:8px; margin-bottom:15px; width:300px;">
+  <!-- Navbar -->
+  <nav class="navbar">
 
-<table border="1" width="100%">
-  <tr>
-    <th>Train No</th>
-    <th>Train Name</th>
-    <th>Type</th>
-    <th>Source</th>
-    <th>Destination</th>
-    <th>Status</th>
-    <th>Seats Available</th>
-    <th>Action</th>
-  </tr>
+    <div class="logo">
+      🚆 Train Reallocation System
+    </div>
 
-  <tr *ngFor="let train of filteredTrains">
+    <ul class="nav-links">
+      <li><a routerLink="/home">Home</a></li>
+      <li><a routerLink="/dashboard">Dashboard</a></li>
+      <li><a routerLink="/history">History</a></li>
+      <li><a routerLink="/pnr-search">PNR Status</a></li>
+      <li><a routerLink="/tt-panel">TT Panel</a></li>
+      <li><a (click)="logout()">Logout</a></li>
+    </ul>
 
-    <td>{{train.TrainNo}}</td>
-    <td>{{train.TrainName}}</td>
-    <td>{{train.Train_Type}}</td>
-    <td>{{train.Source}}</td>
-    <td>{{train.Destination}}</td>
-    <td>{{train.Train_Status}}</td>
+  </nav>
 
-    <td [style.color]="train.Seats_Available > 50 ? 'green' : 'red'">
-      {{train.Seats_Available}}
-    </td>
+  <!-- Page Title -->
+  <h2 class="title">Available Trains</h2>
 
-    <td>
-      <button
-        type="button"
-        class="select-btn"
-        (click)="selectTrain(train)">
-        Select Train
-      </button>
-    </td>
+  <!-- Search -->
+  <div class="search-box">
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      placeholder="Search Train, Source or Destination..."
+    >
+  </div>
 
-  </tr>
-</table>
+  <!-- Train Table -->
+  <div class="table-container">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>Train No</th>
+          <th>Train Name</th>
+          <th>Type</th>
+          <th>Source</th>
+          <th>Destination</th>
+          <th>Status</th>
+          <th>Seats</th>
+          <th>Select</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let train of filteredTrains">
+
+          <td>{{train.TrainNo}}</td>
+          <td>{{train.TrainName}}</td>
+          <td>{{train.Train_Type}}</td>
+          <td>{{train.Source}}</td>
+          <td>{{train.Destination}}</td>
+
+          <td
+            [ngClass]="train.Train_Status == 'Running' ? 'running' : 'cancelled'">
+            {{train.Train_Status}}
+          </td>
+
+          <td
+            [style.color]="train.Seats_Available > 50 ? 'green' : 'red'">
+            {{train.Seats_Available}}
+          </td>
+
+          <td>
+            <span
+              class="select-link"
+              (click)="selectTrain(train)">
+              Select
+            </span>
+          </td>
+
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

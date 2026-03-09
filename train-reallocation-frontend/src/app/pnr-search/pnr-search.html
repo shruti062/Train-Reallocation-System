@@ -1,0 +1,35 @@
+<div class="pnr-container">
+
+<h2>PNR Status Check</h2>
+
+<input 
+type="text"
+placeholder="Enter PNR Number"
+[(ngModel)]="pnr"
+/>
+
+<button (click)="searchPNR()">
+Check Status
+</button>
+
+<div *ngIf="ticket" class="ticket-box">
+
+<h3>Ticket Details</h3>
+
+<p><b>PNR:</b> {{ticket.PNR}}</p>
+<p><b>Passenger:</b> {{ticket.Passenger_Name}}</p>
+
+<p><b>Train No:</b> {{ticket.TrainNo}}</p>
+<p><b>Train Name:</b> {{ticket.TrainName}}</p>
+
+<p><b>Source:</b> {{ticket.Source}}</p>
+<p><b>Destination:</b> {{ticket.Destination}}</p>
+
+<p><b>Coach:</b> {{ticket.Coach}}</p>
+<p><b>Seat:</b> {{ticket.Seat_Number}}</p>
+
+<p><b>Status:</b> {{ticket.seat_status}}</p>
+
+</div>
+
+</div>

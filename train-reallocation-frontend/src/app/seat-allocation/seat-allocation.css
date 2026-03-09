@@ -52,3 +52,11 @@
   border-radius: 6px;
   cursor: pointer;
 }
+.notification-box{
+  background:#e3f2fd;
+  color:#0d47a1;
+  padding:10px;
+  border-radius:6px;
+  margin-bottom:15px;
+  font-weight:500;
+}

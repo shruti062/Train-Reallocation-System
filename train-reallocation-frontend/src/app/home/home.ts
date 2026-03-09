@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -43,4 +43,9 @@ export class Home {
       state: { selectedTrain: train }
     });
   }
-}
+
+  logout() {
+    localStorage.clear();   // agar login data save hai
+    this.router.navigate(['/login']); // login page pe redirect
+  }
+  }
