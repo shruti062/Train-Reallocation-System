@@ -1,8 +1,27 @@
+<!-- Navbar -->
+<nav class="navbar">
+
+  <div class="logo">
+    🚆 Train Reallocation System
+  </div>
+
+  <ul class="nav-links">
+    <li><a routerLink="/home">Home</a></li>
+    <li><a routerLink="/dashboard">Dashboard</a></li>
+    <li><a routerLink="/history">History</a></li>
+    <li><a routerLink="/pnr-search">PNR Status</a></li>
+    <li><a routerLink="/admin-login">TT Panel</a></li>
+    <li><a routerLink="/help-desk">Help Desk</a></li>
+    <li><a (click)="logout()">Logout</a></li>
+  </ul>
+
+</nav>
+
 <div class="pnr-container">
 
 <h2>PNR Status Check</h2>
 
-<input 
+<input
 type="text"
 placeholder="Enter PNR Number"
 [(ngModel)]="pnr"
@@ -29,6 +48,16 @@ Check Status
 <p><b>Seat:</b> {{ticket.Seat_Number}}</p>
 
 <p><b>Status:</b> {{ticket.seat_status}}</p>
+
+</div>
+
+<!-- MAP -->
+
+<div *ngIf="ticket" class="map-box">
+
+<h3>Train Route Map</h3>
+
+<div id="map"></div>
 
 </div>
 

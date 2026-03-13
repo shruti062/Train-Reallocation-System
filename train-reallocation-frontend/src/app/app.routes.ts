@@ -2,6 +2,8 @@ import { Routes } from '@angular/router';
 import { Dashboard } from './dashboard/dashboard';
 import { Home } from './home/home';
 import { Ticket } from './ticket/ticket';
+import { Admin } from './admin/admin';
+import { adminGuard } from './admin-guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -13,7 +15,10 @@ export const routes: Routes = [
   { path: 'dashboard', component: Dashboard },
   { path:  'history', loadComponent: () => import('./history/history').then(m => m.History) },
   { path: 'ticket/:pnr', component: Ticket },
-  { path: 'tt-panel', loadComponent: () => import('./tt-panel/tt-panel').then(m => m.TtPanel) },
-  {path:'pnr-search',loadComponent:()=>import('./pnr-search/pnr-search').then(m=>m.PnrSearch)}
+  { path: 'tt-panel', loadComponent: () => import('./tt-panel/tt-panel').then(m => m.TtPanel),canActivate: [adminGuard] },
+  {path:'pnr-search',loadComponent:()=>import('./pnr-search/pnr-search').then(m=>m.PnrSearch)},
+  {path:'admin-login',component: Admin},
+  {path:'help-desk',loadComponent:()=>import('./help-desk/help-desk').then(m=>m.HelpDesk)}
+  
 ];
 

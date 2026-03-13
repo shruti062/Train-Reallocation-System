@@ -1,0 +1,39 @@
+<div class="chat-container">
+
+<h2>🚆 AI Railway Help Desk</h2>
+
+<select [(ngModel)]="language">
+<option value="en">English</option>
+<option value="hi">Hindi</option>
+ <option value="or">Odia</option>
+<option value="bn">Bengali</option>
+</select>
+
+<div class="chat-box">
+
+<div *ngFor="let msg of messages">
+
+<div *ngIf="msg.sender==='user'" class="user-msg">
+{{msg.text}}
+</div>
+
+<div *ngIf="msg.sender==='ai'" class="ai-msg">
+{{msg.text}}
+</div>
+
+</div>
+
+</div>
+
+<div class="input-box">
+
+<input
+[(ngModel)]="question"
+placeholder="Ask train related question..."
+>
+
+<button (click)="sendMessage()">Send</button>
+
+</div>
+
+</div>

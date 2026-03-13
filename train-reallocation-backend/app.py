@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from deep_translator import GoogleTranslator
 import joblib
 import pandas as pd
 from datetime import datetime, timedelta
@@ -11,9 +12,12 @@ from reportlab.lib.units import inch
 from reportlab.platypus import Table
 from io import BytesIO
 from flask import send_file
+from gtts import gTTS
+import uuid
 import os
 import random
 import requests
+
 
 from pymongo import MongoClient
 from flask_bcrypt import Bcrypt
@@ -23,6 +27,7 @@ from flask_jwt_extended import (
 )
 app = Flask(__name__)
 CORS(app)
+
 app.config["JWT_SECRET_KEY"] = "super-secret-key"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = False
 app.config["JWT_TOKEN_LOCATION"] = ["headers"]
@@ -31,6 +36,7 @@ app.config["JWT_HEADER_TYPE"] = "Bearer"
 
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
+
 
 # ================= MONGODB CONNECTION =================
 client = MongoClient("mongodb://localhost:27017/")
@@ -610,6 +616,44 @@ def smart_add_coach(train_no):
         )
 
         print(f"🚆 Extra coach automatically added to train {train_no}")
+# ======================== AI HELP DESK =================
+@app.route("/helpdesk-ai", methods=["POST"])
+def helpdesk_ai():
+
+    data = request.json
+    question = data.get("question","")
+    lang = data.get("language","en")
+
+    q = question.lower()
+
+    if "pnr" in q:
+        answer = "You can check PNR status from the PNR Status page."
+
+    elif "cancel" in q:
+        answer = "If your train is cancelled our system will suggest alternate trains automatically."
+
+    elif "seat" in q:
+        answer = "Seats are automatically reallocated based on availability."
+
+    else:
+        answer = "Please visit our Train Reallocation website for more information."
+
+    # 🔹 Translate answer
+    translated = GoogleTranslator(source='auto', target=lang).translate(answer)
+
+    # 🔹 Create voice
+    filename = f"voice_{uuid.uuid4()}.mp3"
+
+    if not os.path.exists("static"):
+        os.makedirs("static")
+
+    tts = gTTS(text=translated, lang=lang)
+    tts.save(f"static/{filename}")
+
+    return jsonify({
+        "answer": translated,
+        "voice": f"http://127.0.0.1:5000/static/{filename}"
+    })
 # ================= RUN APP =================
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

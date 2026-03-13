@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router,RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './history.html',
   styleUrls: ['./history.css']
 })
@@ -73,4 +73,8 @@ this.router.navigate(['/ticket', pnr]);
     alert("Cancel failed");
   });
 }
+ logout() {
+    localStorage.clear();   // agar login data save hai
+    this.router.navigate(['/login']); // login page pe redirect
+  }
 }

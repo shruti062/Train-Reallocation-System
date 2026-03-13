@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-tt-panel',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './tt-panel.html',
   styleUrls: ['./tt-panel.css']
 })
@@ -16,7 +17,7 @@ export class TtPanel {
   train: any;
   trainNo: string = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
  checkAlternative(){
 
@@ -70,5 +71,8 @@ alert("Train cancel failed");
 });
 
 }
-
+logout() {
+    localStorage.clear();   // agar login data save hai
+    this.router.navigate(['/login']); // login page pe redirect
+  }
 }
